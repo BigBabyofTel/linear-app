@@ -1,8 +1,9 @@
-import { Github, Loader2, Moon, Sun } from "lucide-react";
+import { Github, Loader2, Moon, Sun, X } from "lucide-react";
 
 export const Icons = {
-    Moon,
-    Sun,
-    Spinner: Loader2,
-    Github,
-}
+  Moon,
+  Sun,
+  Spinner: Loader2,
+  Github,
+  Close: X,
+};
