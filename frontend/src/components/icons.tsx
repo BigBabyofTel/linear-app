@@ -1,4 +1,4 @@
-import { Github, Loader2, Moon, Sun, X } from "lucide-react";
+import { Github, Loader2, Moon, Paperclip, Sun, X } from "lucide-react";
 
 export const Icons = {
   Moon,
@@ -6,4 +6,5 @@ export const Icons = {
   Spinner: Loader2,
   Github,
   Close: X,
+  Attachment: Paperclip,
 };
