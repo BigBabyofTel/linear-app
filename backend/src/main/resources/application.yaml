@@ -1,0 +1,8 @@
+spring:
+    application:
+        name: wuhu-server
+    datasource:
+        url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
+        driverClassName: org.postgresql.Driver
+        username: postgres
+        password: postgres
