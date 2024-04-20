@@ -7,7 +7,7 @@ export function Footer() {
     <div className="flex w-full items-center border-t border-border">
       <footer className="container flex items-center justify-between py-3">
         <p className="text-sm text-muted-foreground">
-          Build by{" "}
+          Built by{" "}
           <a className="font-medium hover:underline" href="/">
             FullStack Community
           </a>
