@@ -10,13 +10,22 @@ export const Route = createLazyFileRoute("/signup")({
   component: Signup,
 });
 
-const signupSchema = z.object({
-  name: z.string().min(5, "Please use a min of 5 characters").trim(),
-  username: z.string().min(5, "Please use a min of 5 characters").trim(),
-  age: z.number().min(18, "You must be 18 or older to sign up"),
-  email: z.string().email(),
-  password: z.string().min(5, "Please enter a password that is 5 characters or more"),
-});
+const signupSchema = z
+  .object({
+    name: z.string().min(5, "Please use a min of 5 characters").trim(),
+    username: z.string().min(5, "Please use a min of 5 characters").trim(),
+    email: z.string().email(),
+    password: z.string().min(5, "Please enter a password that is 5 characters or more"),
+    confirmPassword: z.string(),
+  })
+  .superRefine(({ confirmPassword, password }, ctx) => {
+    if (confirmPassword !== password) {
+      ctx.addIssue({
+        code: "custom",
+        message: "The passwords do not match",
+      });
+    }
+  });
 
 type SignupSchema = z.infer<typeof signupSchema>;
 
@@ -41,19 +50,37 @@ export function Signup() {
         </div>
         <div className="grid gap-3 px-12 py-6">
           <div className="grid gap-1.5">
-            <label className="text-sm font-medium">Name</label>
+            <label className="text-sm font-medium">Username</label>
             <Input
-              className={cn("md:min-w-[30rem]", errors.name && "ring-2 ring-destructive")}
-              {...register("name")}
-              placeholder="Name"
+              className={cn("md:min-w-[30rem]", errors.username && "ring-2 ring-destructive")}
+              {...register("username")}
+              placeholder="BigBabyofTel"
               type="text"
             />
-            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+            {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
           </div>
-          <Input className="md:min-w-[30rem]" {...register("username")} placeholder="Username" type="text" />
-          <Input className="md:min-w-[30rem]" {...register("age")} placeholder="Age" type="number" />
-          <Input className="md:min-w-[30rem]" {...register("email")} placeholder="Email" type="email" />
-          <Input className="md:min-w-[30rem]" {...register("password")} placeholder="Password" type="password" />
+          <div className="grid gap-1.5">
+          <label className="text-sm font-medium">Email</label>
+            <Input className={cn("md:min-w-[30rem]", errors.email && "ring-2 ring-destructive")}
+            {...register("email")} placeholder="BigB@bossenterprises.com" type="email" />
+            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+          </div>
+          <div className="grid gap-1.5">
+          <label className="text-sm font-medium">Password</label>
+            <Input className={cn("md:min-w-[30rem]", errors.password && "ring-2 ring-destructive")}
+            {...register("password")} placeholder="Password" type="password" />
+            {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          </div>
+          <div className="grid gap-1.5">
+          <label className="text-sm font-medium">Confirm Password</label>
+            <Input
+              className={cn("md:min-w-[30rem]", errors.confirmPassword && "ring-2 ring-destructive")}
+              {...register("confirmPassword")}
+              placeholder="Confirm password"
+              type="password"
+            />
+            {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
+          </div>
         </div>
         <div className="flex justify-end border-t border-border px-12 py-4">
           <Button variant="default">Sign up</Button>
