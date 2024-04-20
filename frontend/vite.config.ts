@@ -5,6 +5,9 @@ import { TanStackRouterVite } from '@tanstack/router-vite-plugin'
 
 export default defineConfig({
   plugins: [react(), TanStackRouterVite(),],
+  server: {
+    host: true
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
