@@ -1,8 +1,19 @@
+custom:
+    jwt:
+        secretKey: "413F4428472B4B6250655368566D5970337336763979244226452948404D6351"
+        expiration: 86400000
 spring:
     application:
         name: wuhu-server
     datasource:
         url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
-        driverClassName: org.postgresql.Driver
         username: postgres
         password: postgres
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+    port: 8081
