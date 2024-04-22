@@ -40,8 +40,8 @@ export function Signin() {
           <h2 className="text-xl font-semibold">Sign in</h2>
           <p className="text-sm text-muted-foreground">Welcome back (blind homies)</p>
           <Button className="mt-10 w-full" variant="outline">
-            <Icons.Github className="mr-2 size-4" />
-            Sign in with Github
+            <Icons.Github className="mr-2 size-4" /><a href="https://github.com/login">
+            Sign in with Github</a>
           </Button>
         </div>
         <div className="grid gap-3 px-12 py-6">

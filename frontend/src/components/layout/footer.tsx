@@ -16,13 +16,13 @@ export function Footer() {
         <div className="flex items-center justify-center gap-2">
           <ThemeToggle />
           <a
-            href="/"
+            href="https://github.com/login"
             className={buttonVariants({
               size: "icon",
               variant: "outline",
             })}
           >
-            <Icons.Github className="size-5" />
+            <Icons.Github className="size-5"></Icons.Github>
           </a>
         </div>
       </footer>
