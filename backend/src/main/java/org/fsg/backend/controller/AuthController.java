@@ -1,9 +1,11 @@
 package org.fsg.backend.controller;
 
+import jakarta.validation.Valid;
 import org.fsg.backend.config.JwtProvider;
 import org.fsg.backend.model.User;
 import org.fsg.backend.repository.UserRepository;
 import org.fsg.backend.request.LoginRequest;
+import org.fsg.backend.request.SignUpRequest;
 import org.fsg.backend.response.AuthResponse;
 import org.fsg.backend.service.UserService;
 import java.util.Date;
@@ -41,8 +43,7 @@ public class AuthController {
 
 
     @PostMapping("/sign-up")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) {
-        System.out.println(user.getEmail() + " " + user.getPassword() + " " + user.getName());
+    public ResponseEntity<AuthResponse> createUserHandler(@Valid @RequestBody SignUpRequest user) {
         User isEmailExist = userRepository.findByEmail(user.getEmail());
         if (isEmailExist != null) {
             throw new RuntimeException("Email already exist");
