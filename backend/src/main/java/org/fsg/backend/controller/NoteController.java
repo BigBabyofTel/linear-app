@@ -1,67 +1,51 @@
 package org.fsg.backend.controller;
 
-
+import org.fsg.backend.exceptions.InvalidTokenException;
+import org.fsg.backend.exceptions.UserNotFoundException;
 import org.fsg.backend.model.Note;
 import org.fsg.backend.model.User;
-import org.fsg.backend.repository.NoteRepository;
 import org.fsg.backend.request.NoteRequest;
+import org.fsg.backend.response.ErrorResponse;
 import org.fsg.backend.response.NoteResponse;
-import org.fsg.backend.service.UserService;
-import org.fsg.backend.utils.AuthUtils;
+import org.fsg.backend.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 
 @RestController
 @RequestMapping("api/v1/notes")
 public class NoteController {
 
-        private final NoteRepository noteRepository;
-        private final UserService userService;
+        private final NoteService noteService;
 
         @Autowired
-        public NoteController(NoteRepository noteRepository, UserService userService) {
-            this.noteRepository = noteRepository;
-            this.userService = userService;
+        public NoteController(NoteService noteService) {
+            this.noteService = noteService;
         }
-
 
 
     @PostMapping()
-    public ResponseEntity<NoteResponse> createNoteHandler(
+    public ResponseEntity<?> createNoteHandler(
             @RequestBody NoteRequest note,
             @RequestHeader("Authorization") String authToken
-    ) throws Exception {
-
-        String token = AuthUtils.extractBearerToken(authToken);
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    ) {
+        try {
+            User user = noteService.validateAndExtractUser(authToken);
+            Note newNote = noteService.createNote(note, user);
+            NoteResponse response = noteService.createNoteResponse(newNote);
+            return ResponseEntity.ok(response);
+        } catch (InvalidTokenException | UserNotFoundException e) {
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
-        User user = userService.findUserByJwtToken(token);
-
-        Note newNote = new Note();
-        newNote.setTitle(note.getTitle());
-        newNote.setContent(note.getContent());
-        newNote.setCreatedAt(new Date());
-        newNote.setUser(user);
-        noteRepository.save(newNote);
-
-        NoteResponse response = new NoteResponse();
-        response.setId(newNote.getId());
-        response.setTitle(newNote.getTitle());
-        response.setContent(newNote.getContent());
-        response.setCreatedAt(newNote.getCreatedAt());
-
-        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello World!";
-    }
+
     //    @DeleteMapping("/{id}")
     //    @PatchMapping("/{id}")
     //    @GetMapping("/all")

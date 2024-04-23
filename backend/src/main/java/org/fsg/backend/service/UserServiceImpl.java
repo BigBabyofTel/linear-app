@@ -1,7 +1,10 @@
 package org.fsg.backend.service;
 
 
+import io.jsonwebtoken.JwtException;
 import org.fsg.backend.config.JwtProvider;
+import org.fsg.backend.exceptions.InvalidTokenException;
+import org.fsg.backend.exceptions.UserNotFoundException;
 import org.fsg.backend.model.User;
 import org.fsg.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +24,27 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
     }
+
     @Override
-    public User findUserByJwtToken(String token) throws Exception {
-        String email =  jwtProvider.getEmailFromJwtToken(token);
-        User user = userRepository.findByEmail(email);
-        if(user == null){
-            throw new Exception("User not found");
+    public User findUserByJwtToken(String token) throws InvalidTokenException, UserNotFoundException {
+        try {
+            String email = jwtProvider.getEmailFromJwtToken(token);
+            User user = userRepository.findByEmail(email);
+            if (user == null) {
+                throw new UserNotFoundException("User not found with email: " + email);
+            }
+            return user;
+        } catch (JwtException | IllegalArgumentException ex) {
+            throw new InvalidTokenException("Invalid JWT token", ex);
         }
-        return user;
     }
 
     @Override
-    public User findUserByEmail(String email) throws Exception {
+    public User findUserByEmail(String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email);
-
-        if(user == null){
-            throw new Exception("User not found");
+        if (user == null) {
+            throw new UserNotFoundException("User not found with email: " + email);
         }
-
         return user;
     }
 
@@ -54,3 +60,4 @@ public class UserServiceImpl implements UserService {
         );
     }
 }
+
