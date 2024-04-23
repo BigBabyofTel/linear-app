@@ -11,3 +11,7 @@ spring:
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
+
+aws:
+  access_key_id: ${AWS_ACCESS_KEY}
+  secret_access_key: ${AWS_SECRET_KEY}
