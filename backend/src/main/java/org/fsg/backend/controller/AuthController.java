@@ -6,6 +6,7 @@ import org.fsg.backend.repository.UserRepository;
 import org.fsg.backend.request.LoginRequest;
 import org.fsg.backend.response.AuthResponse;
 import org.fsg.backend.service.UserService;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,10 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -54,6 +52,7 @@ public class AuthController {
         newUser.setEmail(user.getEmail());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setName(user.getName());
+        newUser.setCreatedAt(new Date());
         userRepository.save(newUser);
 
 
@@ -87,6 +86,7 @@ public class AuthController {
 
         return ResponseEntity.ok(authResponse);
     }
+
 
 
     private Authentication authenticate(String email, String password) {
