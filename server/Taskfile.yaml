@@ -1,0 +1,60 @@
+version: "3"
+
+tasks:
+  build:
+    desc: Building the application
+    cmds:
+      - echo "Building..."
+      - go build -o main ./cmd/api
+
+  clean:
+    desc: Clean the binary
+    cmds:
+      - echo "Cleaning..."
+      - rm -f main
+
+  run:
+    desc: Run the application
+    cmds:
+      - go run ./cmd/api
+
+  watch:
+    desc: Live Reload
+    cmds:
+      - air
+
+  create-migration:
+    desc: Create migration
+    cmds:
+      - echo "Creating migration... {{.name}}"
+      - migrate create -seq -ext=.sql -dir=./migrations "{{.name}}"
+
+  migrate-up:
+    desc: Run migration
+    cmds:
+      - echo "Migrating up..."
+      - migrate -path ./migrations -database postgresql://postgres:postgres@localhost:5431/postgres?sslmode=disable
+        up
+  lint:
+    desc: Check your terrible code
+    cmds:
+      - golangci-lint run
+
+  test:
+    desc: Test the application
+    cmds:
+      - echo "Testing..."
+      - go test -v -cover -coverpkg=./... ./...
+
+  db-container:
+    desc: Run database container
+    cmds:
+      - echo "Running database container..."
+      - docker run --name postgres2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -p 5431:5432 -d postgres
+
+  db-container-down:
+    desc: Stop database container
+    cmds:
+      - echo "Stopping database container..."
+      - docker stop postgres2
+      - docker rm postgres2
