@@ -62,6 +62,12 @@ func (a *app) routes() *chi.Mux {
 		r.Delete("/delete-image/{slug}", a.requirePermission(data.AdminPermission, a.requireAuthenticatedUser(a.removeWorkspaceImageHandler)))
 	})
 
+	r.Route("/v1/requests", func(r chi.Router) {
+		r.Post("/invite/{slug}", a.requirePermission(data.AdminPermission, a.requireAuthenticatedUser(a.inviteUserToWorkspaceHandler)))
+		r.Get("/", a.requireAuthenticatedUser(a.getAllRequestsHandler))
+		r.Post("/", a.requireAuthenticatedUser(a.answerRequestHandler))
+	})
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		res := map[string]string{
 			"status": "ok",

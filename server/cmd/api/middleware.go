@@ -41,24 +41,15 @@ func (a *app) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := r.Context()
-		user, err := a.Cache.User.GetUserByToken(ctx, token)
-		if user == nil || err != nil {
-			user, err = a.DB.User.GetForToken(data.ScopeAuthentication, token)
-			if err != nil {
-				switch {
-				case errors.Is(err, data.ErrRecordNotFound):
-					a.invalidAuthenticationTokenResponse(w, r)
-				default:
-					a.serverErrorResponse(w, r, err)
-				}
-				return
-			}
-
-			if err := a.Cache.User.SetUserByToken(ctx, token, user); err != nil {
+		user, err := a.DB.User.GetForToken(data.ScopeAuthentication, token)
+		if err != nil {
+			switch {
+			case errors.Is(err, data.ErrRecordNotFound):
+				a.invalidAuthenticationTokenResponse(w, r)
+			default:
 				a.serverErrorResponse(w, r, err)
-				return
 			}
+			return
 		}
 
 		r = a.contextSetUser(r, user)
@@ -73,34 +64,26 @@ func (a *app) requirePermission(code string, next http.HandlerFunc) http.Handler
 		params := chi.URLParam(r, "id")
 		id, _ := strconv.ParseInt(params, 10, 64)
 
-		workspace, err := a.Cache.Workspace.GetWorkspace(r.Context(), session.ID, slug)
-		if workspace == nil || err != nil {
-			workspace, err := a.DB.Workspace.Get(id, slug, session.ID)
-			if err != nil {
-				switch {
-				case errors.Is(err, data.ErrRecordNotFound):
-					a.notFoundResponse(w, r)
-				default:
-					a.serverErrorResponse(w, r, err)
-				}
-				return
-			}
-
-			permission, err := a.DB.Permission.GetForUser(session.ID, workspace.ID)
-			if err != nil {
+		workspace, err := a.DB.Workspace.Get(id, slug, session.ID)
+		if err != nil {
+			switch {
+			case errors.Is(err, data.ErrRecordNotFound):
+				a.notFoundResponse(w, r)
+			default:
 				a.serverErrorResponse(w, r, err)
-				return
 			}
+			return
+		}
 
-			if !permission.Contains(code) {
-				a.notPermittedResponse(w, r)
-				return
-			}
+		permission, err := a.DB.Permission.GetForUser(session.ID, workspace.ID)
+		if err != nil {
+			a.serverErrorResponse(w, r, err)
+			return
+		}
 
-			if err := a.Cache.Workspace.SetWorkspace(r.Context(), session.ID, workspace); err != nil {
-				a.serverErrorResponse(w, r, err)
-				return
-			}
+		if !permission.Contains(code) {
+			a.notPermittedResponse(w, r)
+			return
 		}
 
 		r = a.contextSetWorkspace(r, workspace)

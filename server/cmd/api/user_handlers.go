@@ -17,13 +17,7 @@ func (a *app) getSessionUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func (a *app) deleteUserAccountHandler(w http.ResponseWriter, r *http.Request) {
 	user := a.contextGetUser(r)
-	token := a.contextGetToken(r)
 	if err := a.DB.User.Delete(user.ID); err != nil {
-		a.serverErrorResponse(w, r, err)
-		return
-	}
-
-	if err := a.Cache.User.DelUserByToken(r.Context(), token); err != nil {
 		a.serverErrorResponse(w, r, err)
 		return
 	}

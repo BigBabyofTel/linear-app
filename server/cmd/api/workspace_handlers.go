@@ -62,11 +62,6 @@ func (a *app) createWorkspaceHandler(w http.ResponseWriter, r *http.Request) {
 	workspace.Role = data.AdminPermission
 	workspace.RoleId = 1
 
-	if err := a.Cache.Workspace.SetWorkspace(r.Context(), session.ID, workspace); err != nil {
-		a.serverErrorResponse(w, r, err)
-		return
-	}
-
 	if err := a.writeJSON(w, http.StatusCreated, envelope{"workspace": workspace}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
@@ -77,45 +72,32 @@ func (a *app) getWorkspaceHandler(w http.ResponseWriter, r *http.Request) {
 	session := a.contextGetUser(r)
 	slug := chi.URLParam(r, "slug")
 
-	workspaces, err := a.Cache.Workspace.GetWorkspace(r.Context(), session.ID, slug)
-	if workspaces == nil || err != nil {
-		workspace, err := a.DB.Workspace.Get(0, slug, session.ID)
-		if err != nil {
-			switch {
-			case errors.Is(err, data.ErrRecordNotFound):
-				a.notFoundResponse(w, r)
-			default:
-				a.serverErrorResponse(w, r, err)
-			}
-			return
-		}
-		switch workspace.RoleId {
-		case 1:
-			workspace.Role = "admin"
-		case 2:
-			workspace.Role = "moderator"
-		case 3:
-			workspace.Role = "member"
-		}
-		if err := a.Cache.Workspace.SetWorkspace(r.Context(), session.ID, workspace); err != nil {
+	workspace, err := a.DB.Workspace.Get(0, slug, session.ID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			a.notFoundResponse(w, r)
+		default:
 			a.serverErrorResponse(w, r, err)
-			return
 		}
-
-		if err := a.writeJSON(w, http.StatusOK, envelope{"workspace": workspace}, nil); err != nil {
-			a.serverErrorResponse(w, r, err)
-
-		}
+		return
+	}
+	switch workspace.RoleId {
+	case 1:
+		workspace.Role = "admin"
+	case 2:
+		workspace.Role = "moderator"
+	case 3:
+		workspace.Role = "member"
 	}
 
-	if err := a.writeJSON(w, http.StatusOK, envelope{"workspace": workspaces}, nil); err != nil {
+	if err := a.writeJSON(w, http.StatusOK, envelope{"workspace": workspace}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
 
 }
 
 func (a *app) deleteWorkspaceHandler(w http.ResponseWriter, r *http.Request) {
-	session := a.contextGetUser(r)
 	slug := chi.URLParam(r, "slug")
 
 	if err := a.DB.Workspace.Delete(slug); err != nil {
@@ -125,11 +107,6 @@ func (a *app) deleteWorkspaceHandler(w http.ResponseWriter, r *http.Request) {
 		default:
 			a.serverErrorResponse(w, r, err)
 		}
-		return
-	}
-
-	if err := a.Cache.Workspace.DelWorkspace(r.Context(), session.ID, slug); err != nil {
-		a.serverErrorResponse(w, r, err)
 		return
 	}
 
@@ -185,11 +162,6 @@ func (a *app) updateWorkspaceHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := a.Cache.Workspace.SetWorkspace(r.Context(), session.ID, updateWorkspace); err != nil {
-		a.serverErrorResponse(w, r, err)
-		return
-	}
-
 	if err = a.writeJSON(w, http.StatusOK, envelope{"workspace": updateWorkspace}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
@@ -209,11 +181,6 @@ func (a *app) removeWorkspaceImageHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := a.Cache.Workspace.SetWorkspace(r.Context(), session.ID, workspace); err != nil {
-		a.serverErrorResponse(w, r, err)
-		return
-	}
-
 	if err = a.writeJSON(w, http.StatusOK, envelope{"workspace": workspace}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
@@ -222,18 +189,10 @@ func (a *app) removeWorkspaceImageHandler(w http.ResponseWriter, r *http.Request
 func (a *app) getAllUserWorkspacesHandler(w http.ResponseWriter, r *http.Request) {
 	session := a.contextGetUser(r)
 
-	workspaces, err := a.Cache.Workspace.GetMyWorkspaces(r.Context(), session.ID)
-	if workspaces == nil || err != nil {
-		workspaces, err = a.DB.Workspace.GetUserWorkspaces(session.ID)
-		if err != nil {
-			a.serverErrorResponse(w, r, err)
-			return
-		}
-
-		if err := a.Cache.Workspace.SetMyWorkspaces(r.Context(), session.ID, workspaces); err != nil {
-			a.serverErrorResponse(w, r, err)
-			return
-		}
+	workspaces, err := a.DB.Workspace.GetUserWorkspaces(session.ID)
+	if err != nil {
+		a.serverErrorResponse(w, r, err)
+		return
 	}
 
 	if err = a.writeJSON(w, http.StatusOK, envelope{"workspaces": workspaces}, nil); err != nil {
@@ -327,33 +286,22 @@ func (a *app) getAllWorkspaceUsersHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	users, err := a.Cache.Workspace.GetWorkspaceUsers(r.Context(), id)
-	if users == nil || err != nil {
-		users, err := a.DB.Workspace.GetAllWorkspaceUsers(id)
-		if err != nil {
-			a.serverErrorResponse(w, r, err)
-			return
-		}
-		for _, user := range users {
-			switch user.RoleId {
-			case 1:
-				user.Role = "admin"
-			case 2:
-				user.Role = "moderator"
-			case 3:
-				user.Role = "member"
-			}
-		}
-
-		if err := a.Cache.Workspace.SetWorkspaceUsers(r.Context(), id, users); err != nil {
-			a.serverErrorResponse(w, r, err)
-			return
-		}
-
-		if err = a.writeJSON(w, http.StatusOK, envelope{"users": users}, nil); err != nil {
-			a.serverErrorResponse(w, r, err)
+	users, err := a.DB.Workspace.GetAllWorkspaceUsers(id)
+	if err != nil {
+		a.serverErrorResponse(w, r, err)
+		return
+	}
+	for _, user := range users {
+		switch user.RoleId {
+		case 1:
+			user.Role = "admin"
+		case 2:
+			user.Role = "moderator"
+		case 3:
+			user.Role = "member"
 		}
 	}
+
 	if err = a.writeJSON(w, http.StatusOK, envelope{"users": users}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}

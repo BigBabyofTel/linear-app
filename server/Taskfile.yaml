@@ -33,7 +33,7 @@ tasks:
     desc: Run migration
     cmds:
       - echo "Migrating up..."
-      - migrate -path ./migrations -database postgresql://postgres:postgres@localhost:5431/postgres?sslmode=disable
+      - migrate -path ./migrations -database postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable
         up
   lint:
     desc: Check your terrible code
