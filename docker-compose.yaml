@@ -1,8 +1,9 @@
-version: '3.9'
+version: "3.9"
 
 services:
-
   db:
+    networks:
+      - app-network
     image: postgres
     environment:
       POSTGRES_PASSWORD: postgres
@@ -10,3 +11,27 @@ services:
       POSTGRES_DATABASE: postgres
     ports:
       - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  server:
+    networks:
+      - app-network
+    build: ./server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      PORT: ${PORT}
+      DB_URL: ${DB_URL}
+      CLIENT_URL: ${CLIENT_URL}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:

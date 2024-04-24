@@ -34,7 +34,7 @@ func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	log.Logger = log.With().Caller().Logger()
 
-	dbInstance, err := accessDB("postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+	dbInstance, err := accessDB(cfg.DbUrl)
 
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect with database")
