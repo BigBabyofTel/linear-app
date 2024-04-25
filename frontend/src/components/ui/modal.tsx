@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { ReactNode, useEffect, useRef } from "react";
 import { Button } from "./button";
 import { Icons } from "../icons";
-import { useClickOutside } from "@/hooks/use-click-outside";
+import { useClickOutside } from '@/hooks/use-click-outside'
 
 export type ModalProps = {
   children: ReactNode;

@@ -1,7 +1,6 @@
 import { Github, Loader2, Moon, Paperclip, Sun, X } from "lucide-react";
 import { HTMLAttributes } from "react";
 
-
 export const Icons = {
   Moon,
   Sun,

@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body,
+  html,
+  :root {
+    height: 100%;
+    font-family: "DM Sans", sans-serif;
+  }
+  :root {
+    --background: 213 100% 95%;
+    --foreground: 213 5% 3%;
+
+    --card: 213 50% 90%;
+    --card-foreground: 213 5% 10%;
+
+    --popover: 213 100% 95%;
+    --popover-foreground: 213 100% 3%;
+
+    --primary: 213 88% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 213 30% 70%;
+    --secondary-foreground: 0 0% 0%;
+
+    --muted: 175 30% 85%;
+    --muted-foreground: 213 5% 35%;
+
+    --accent: 175 30% 80%;
+    --accent-foreground: 213 5% 10%;
+
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 213 5% 90%;
+
+    --border: 213 30% 50%;
+    --input: 213 30% 18%;
+
+    --ring: 213 88% 30%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 213 50% 5%;
+    --foreground: 213 5% 90%;
+
+    --card: 213 50% 3%;
+    --card-foreground: 213 5% 90%;
+
+    --popover: 213 50% 5%;
+    --popover-foreground: 213 5% 90%;
+
+    --primary: 213 88% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 213 30% 10%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 175 30% 15%;
+    --muted-foreground: 213 5% 60%;
+
+    --accent: 175 30% 15%;
+    --accent-foreground: 213 5% 90%;
+
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 213 5% 90%;
+
+    --border: 213 30% 18%;
+    --input: 213 30% 18%;
+
+    --ring: 213 88% 30%;
+    --radius: 0.75rem;
+  }
+
+  .deep-red {
+    --background: 0 100% 95%;
+    --foreground: 0 5% 10%;
+
+    --card: 0 50% 90%;
+    --card-foreground: 0 5% 15%;
+
+    --popover: 0 100% 95%;
+    --popover-foreground: 0 100% 10%;
+
+    --primary: 0 66% 41%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 30% 70%;
+    --secondary-foreground: 0 0% 0%;
+
+    --muted: -38 30% 85%;
+    --muted-foreground: 0 5% 35%;
+
+    --accent: -38 30% 80%;
+    --accent-foreground: 0 5% 15%;
+
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 0 5% 90%;
+
+    --border: 0 30% 50%;
+    --input: 0 30% 26%;
+
+    --ring: 0 66% 41%;
+    --radius: 1rem;
+  }
+
+  .deep-red-dark {
+    --background: 0 50% 10%;
+    --foreground: 0 5% 90%;
+
+    --card: 0 50% 10%;
+    --card-foreground: 0 5% 90%;
+
+    --popover: 0 50% 5%;
+    --popover-foreground: 0 5% 90%;
+
+    --primary: 0 66% 41%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 30% 20%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: -38 30% 25%;
+    --muted-foreground: 0 5% 60%;
+
+    --accent: -38 30% 25%;
+    --accent-foreground: 0 5% 90%;
+
+    --destructive: 0 100% 30%;
+    --destructive-foreground: 0 5% 90%;
+
+    --border: 0 30% 26%;
+    --input: 0 30% 26%;
+
+    --ring: 0 66% 41%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  #root {
+    @apply flex h-dvh flex-col;
+  }
+}
