@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { TypewriterEffect } from "@/components/ui/typewriter-effect";
+import { API } from "@/lib/utils";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-
+import { useQuery } from "@tanstack/react-query";
 export const Route = createLazyFileRoute("/")({
   component: Index,
 });
@@ -27,8 +28,19 @@ const words = [
   },
 ];
 
+async function fetchNothing() {
+  const response = await API.get("/");
+  return response.data;
+}
+
 function Index() {
   const [open, setOpen] = useState(true);
+
+  const { data } = useQuery({
+    queryKey: ["br"],
+    queryFn: fetchNothing,
+  });
+
   return (
     <>
       <main className="flex-1">
@@ -36,14 +48,18 @@ function Index() {
           <p className="mb-4 text-sm text-muted-foreground">Very Gucci</p>
           <TypewriterEffect words={words} />
           <div className="mt-10 flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-            <Button variant="ghost" onClick={() => setOpen(true)}>Contact Us</Button>
-            <Button><a href="./signup">Sign Up</a></Button>
+            <Button variant="ghost" onClick={() => setOpen(true)}>
+              Contact Us
+            </Button>
+            <Button>
+              <a href="./signup">Sign Up</a>
+            </Button>
           </div>
         </div>
       </main>
 
       <Modal onClose={() => setOpen(false)} className="p-12" isOpen={open}>
-        Hello World
+        {data?.status}
       </Modal>
     </>
   );

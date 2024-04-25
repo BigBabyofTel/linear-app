@@ -4,15 +4,22 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Toaster } from "sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 export const Route = createRootRoute({
   component: () => (
     <>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <Header />
-        <Outlet />
-        <Footer />
-        <Toaster richColors />
+        <QueryClientProvider client={queryClient}>
+          <Header />
+          <Outlet />
+          <Footer />
+          <Toaster richColors />
+        </QueryClientProvider>
       </ThemeProvider>
+
       <TanStackRouterDevtools />
     </>
   ),
