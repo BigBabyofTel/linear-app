@@ -8,13 +8,14 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/lucabrx/wuhu/api"
 	"github.com/lucabrx/wuhu/config"
+	_ "github.com/lucabrx/wuhu/docs"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-//	@title			Linear-Clone API
+//	@title			Linear Clone API
 //	@version		1.0
-//	@description	API for Linear-Clone
+//	@description	API for managing linear clones
 //	@termsOfService	http://swagger.io/terms/
 
 //	@contact.name	API Support

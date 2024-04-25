@@ -76,5 +76,6 @@ func (a *app) routes() *chi.Mux {
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("doc.json"),
 	))
+
 	return r
 }

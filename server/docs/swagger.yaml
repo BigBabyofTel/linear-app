@@ -1,16 +1,104 @@
 basePath: /v2
+definitions:
+  api.UpdatePasswordInput:
+    properties:
+      currentPassword:
+        type: string
+      newPassword:
+        type: string
+    type: object
 host: petstore.swagger.io
 info:
   contact:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: API for Linear-Clone
+  description: API for managing linear clones
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Linear-Clone API
+  title: Linear Clone API
   version: "1.0"
-paths: {}
+paths:
+  /v1/user/:
+    delete:
+      description: Deletes the user account associated with the current session.
+      responses:
+        "303":
+          description: Redirects to client URL
+          schema:
+            type: header
+        "400":
+          description: "error\":\t\"bad request"
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user account
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get details of the user associated with the current session.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: "user\":\t\tdata.User"
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: "error\":\t\"bad request"
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: "error\":\t\"unauthorized\"\t//\tIf\tauthentication\tfails"
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: "error\":\t\"internal server error"
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve session user
+      tags:
+      - user
+  /v1/user/password/:
+    patch:
+      consumes:
+      - application/json
+      description: Updates the password of the user associated with the current session.
+      parameters:
+      - description: Update Password Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdatePasswordInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: "message\":\t\"password updated"
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: "error\":\t\"bad request"
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update user password
+      tags:
+      - user
 swagger: "2.0"

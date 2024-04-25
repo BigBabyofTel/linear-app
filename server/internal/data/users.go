@@ -17,6 +17,10 @@ var AnonymousUser = &User{}
 type UserModel struct {
 	DB *sql.DB
 }
+
+// User represents a user in the system.
+//	@Description	A user object containing user information.
+//	@Name			User
 type User struct {
 	ID        int64     `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
