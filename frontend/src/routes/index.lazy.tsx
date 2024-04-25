@@ -36,8 +36,8 @@ function Index() {
           <p className="mb-4 text-sm text-muted-foreground">Very Gucci</p>
           <TypewriterEffect words={words} />
           <div className="mt-10 flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-            <Button variant="ghost">Contact Us</Button>
-            <Button onClick={() => setOpen(true)}>Sign Up</Button>
+            <Button variant="ghost" onClick={() => setOpen(true)}>Contact Us</Button>
+            <Button><a href="./signup">Sign Up</a></Button>
           </div>
         </div>
       </main>

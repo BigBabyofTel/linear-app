@@ -1,36 +1,25 @@
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
-import { SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
 
-export const Route = createLazyFileRoute("/signup")({
-  component: Signup,
+export const Route = createFileRoute("/profile")({
+  component: Profile,
 });
 
-const signupSchema = z
-  .object({
-    name: z.string().min(5, "Please use a min of 5 characters").trim(),
-    username: z.string().min(5, "Please use a min of 5 characters").trim(),
-    email: z.string().email(),
-    password: z.string().min(5, "Please enter a password that is 5 characters or more"),
-    confirmPassword: z.string(),
-  })
-  .superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password) {
-      ctx.addIssue({
-        code: "custom",
-        message: "The passwords do not match",
-      });
-    }
-  });
+const signupSchema = z.object({
+  name: z.string().min(5, "Please use a min of 5 characters").trim(),
+  username: z.string().min(5, "Please use a min of 5 characters").trim(),
+  email: z.string().email(),
+});
 
 type SignupSchema = z.infer<typeof signupSchema>;
 
-export function Signup() {
+export function Profile() {
   const {
     register,
     handleSubmit,
@@ -39,7 +28,11 @@ export function Signup() {
     resolver: zodResolver(signupSchema),
   });
 
-const link = <Link to="/signin" className="underline underline-offset-2">Sign in</Link>;
+  const link = (
+    <Link to="/signin" className="underline underline-offset-2">
+      Sign in
+    </Link>
+  );
   const onSubmit: SubmitHandler<SignupSchema> = (data) => console.log(data);
 
   console.log(errors);
@@ -63,6 +56,7 @@ const link = <Link to="/signin" className="underline underline-offset-2">Sign in
               {...register("username")}
               placeholder="BigBabyofTel"
               type="text"
+              value={"BigBabyofTel"}
             />
             {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
           </div>
@@ -76,25 +70,16 @@ const link = <Link to="/signin" className="underline underline-offset-2">Sign in
             />
             {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
-          <div className="grid gap-1.5">
-            <label className="text-sm font-medium">Password</label>
-            <Input
-              className={cn("md:min-w-[30rem]", errors.password && "ring-2 ring-destructive")}
-              {...register("password")}
-              placeholder="Password"
-              type="password"
-            />
-            {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
-          </div>
-          <div className="grid gap-1.5">
-            <label className="text-sm font-medium">Confirm Password</label>
-            <Input
-              className={cn("md:min-w-[30rem]", errors.confirmPassword && "ring-2 ring-destructive")}
-              {...register("confirmPassword")}
-              placeholder="Confirm password"
-              type="password"
-            />
-            {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
+          <div className="grid gap-1.5 content-end">
+            <div className="grid gap-1.5">
+              <Button onClick={(e) => e.preventDefault()}>Change Password</Button>
+            </div>
+            <div className="grid gap-1.5">
+              <Button onClick={(e) => e.preventDefault()}>Change Email</Button>
+            </div>
+            <div className="grid gap-1.5">
+              <Button onClick={(e) => e.preventDefault()}>Remove connected accounts</Button>
+            </div>
           </div>
         </div>
         <div className="border-t border-border px-12 py-4">

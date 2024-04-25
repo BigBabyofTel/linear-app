@@ -13,11 +13,14 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ProfileImport } from './routes/profile'
+import { Route as ForgotPasswordImport } from './routes/forgot-password'
 
 // Create Virtual Routes
 
 const TestLazyImport = createFileRoute('/test')()
 const SignupLazyImport = createFileRoute('/signup')()
+const SigninLazyImport = createFileRoute('/signin')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
@@ -33,10 +36,25 @@ const SignupLazyRoute = SignupLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/signup.lazy').then((d) => d.Route))
 
+const SigninLazyRoute = SigninLazyImport.update({
+  path: '/signin',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/signin.lazy').then((d) => d.Route))
+
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+
+const ProfileRoute = ProfileImport.update({
+  path: '/profile',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ForgotPasswordRoute = ForgotPasswordImport.update({
+  path: '/forgot-password',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -51,8 +69,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/forgot-password': {
+      preLoaderRoute: typeof ForgotPasswordImport
+      parentRoute: typeof rootRoute
+    }
+    '/profile': {
+      preLoaderRoute: typeof ProfileImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/signin': {
+      preLoaderRoute: typeof SigninLazyImport
       parentRoute: typeof rootRoute
     }
     '/signup': {
@@ -70,7 +100,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
+  ForgotPasswordRoute,
+  ProfileRoute,
   AboutLazyRoute,
+  SigninLazyRoute,
   SignupLazyRoute,
   TestLazyRoute,
 ])
