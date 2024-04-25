@@ -4,25 +4,28 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"sync"
-
-	"github.com/lucabrx/wuhu/internal/aws"
-
-	"github.com/lucabrx/wuhu/config"
-	"github.com/lucabrx/wuhu/internal/data"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/lucabrx/wuhu/api"
+	"github.com/lucabrx/wuhu/config"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
-type app struct {
-	logger *zerolog.Logger
-	wg     sync.WaitGroup
-	DB     data.Models
-	config config.AppConfig
-	AWS    aws.AWS
-}
+//	@title			Linear-Clone API
+//	@version		1.0
+//	@description	API for Linear-Clone
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+//	@host		petstore.swagger.io
+//	@BasePath	/v2
 
 func main() {
 	cfg, err := config.LoadConfig()
@@ -43,14 +46,9 @@ func main() {
 	defer dbInstance.Close()
 	log.Info().Msg("Connected to the database!")
 
-	a := app{
-		logger: &log.Logger,
-		DB:     data.NewModals(dbInstance),
-		config: cfg,
-		AWS:    aws.NewAws(cfg.AwsAccessKeyId, cfg.AwsSecretAccessKey),
-	}
+	a := api.NewApplication(dbInstance, cfg)
 
-	if err = a.serve(); err != nil {
+	if err = a.Serve(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start server")
 	}
 }

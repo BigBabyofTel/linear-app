@@ -5,7 +5,7 @@ tasks:
     desc: Building the application
     cmds:
       - echo "Building..."
-      - go build -o main ./cmd/api
+      - go build -o main main.go
 
   clean:
     desc: Clean the binary
@@ -16,7 +16,7 @@ tasks:
   run:
     desc: Run the application
     cmds:
-      - go run ./cmd/api
+      - go run main.go
 
   watch:
     desc: Live Reload
@@ -28,6 +28,13 @@ tasks:
     cmds:
       - echo "Creating migration... {{.name}}"
       - migrate create -seq -ext=.sql -dir=./migrations "{{.name}}"
+
+  migrate-up-dev:
+    desc: Run migration
+    cmds:
+      - echo "Migrating up..."
+      - migrate -path ./migrations -database postgresql://  postgres:postgres@localhost:5432/postgres?sslmode=disable
+        up
 
   migrate-up:
     desc: Run migration
@@ -50,7 +57,7 @@ tasks:
     desc: Run database container
     cmds:
       - echo "Running database container..."
-      - docker run --name postgres2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -p 5431:5432 -d postgres
+      - docker run --name postgres2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -p 5432:5432 -d postgres
 
   db-container-down:
     desc: Stop database container
@@ -58,3 +65,10 @@ tasks:
       - echo "Stopping database container..."
       - docker stop postgres2
       - docker rm postgres2
+
+  swag-init:
+    desc: Generate swagger docs
+    cmds:
+      - echo "Generating swagger docs..."
+      - swag init
+      - swag init -g cmd/api/main.go -o cmd/api/docs

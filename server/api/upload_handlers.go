@@ -1,10 +1,11 @@
-package main
+package api
 
 import (
-	"github.com/google/uuid"
-	"github.com/minio/minio-go/v7"
 	"net/http"
 	"strings"
+
+	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
 )
 
 func (a *app) uploadImageHandler(w http.ResponseWriter, r *http.Request) {

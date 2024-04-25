@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (a *app) serve() error {
+func (a *app) Serve() error {
 	srv := &http.Server{
 		Addr:         a.config.Port,
 		Handler:      a.routes(),

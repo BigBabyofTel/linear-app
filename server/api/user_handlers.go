@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"net/http"
@@ -23,6 +23,11 @@ func (a *app) deleteUserAccountHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, a.config.ClientUrl, http.StatusSeeOther)
+}
+
+type UpdatePasswordInput struct {
+	CurrentPassword string `json:"currentPassword"`
+	NewPassword     string `json:"newPassword"`
 }
 
 func (a *app) updatePasswordHandler(w http.ResponseWriter, r *http.Request) {

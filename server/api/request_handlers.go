@@ -1,10 +1,11 @@
-package main
+package api
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/lucabrx/wuhu/internal/data"
-	"net/http"
 )
 
 func (a *app) inviteUserToWorkspaceHandler(w http.ResponseWriter, r *http.Request) {

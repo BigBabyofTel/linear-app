@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"net/http"
@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
 	"github.com/lucabrx/wuhu/internal/data"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func (a *app) routes() *chi.Mux {
@@ -69,11 +70,11 @@ func (a *app) routes() *chi.Mux {
 	})
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		res := map[string]string{
-			"status": "ok",
-		}
-
-		a.writeJSON(w, http.StatusOK, res, nil)
+		http.Redirect(w, r, "/swagger/index.html", http.StatusMovedPermanently)
 	})
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("doc.json"),
+	))
 	return r
 }
