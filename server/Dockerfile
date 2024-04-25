@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o main ./cmd/api
+RUN go build -o main .
 
 # Final Stage
 FROM alpine:3.19
