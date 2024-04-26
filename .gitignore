@@ -1,1 +1,5 @@
 .env
+#PLSSSSSSSSSSS stop tracking the .next folder
+frontend/.next
+.next
+*.next

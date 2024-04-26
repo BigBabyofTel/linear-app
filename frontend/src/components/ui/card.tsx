@@ -9,7 +9,7 @@ const cardVariants = cva(
   variants: {
     variant: {
       default: "shadow-sm border",
-      dashboard: "shadow-lg border border-red-500",
+      dashboard: "shadow-lg border",
     },
   },
   defaultVariants: {
