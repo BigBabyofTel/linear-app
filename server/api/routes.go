@@ -45,6 +45,9 @@ func (a *app) routes() *chi.Mux {
 
 	r.Route("/v1/issues", func(r chi.Router) {
 		r.Post("/", a.requireAuthenticatedUser(a.createIssueHandler))
+		r.Get("/{issueId}", a.requireAuthenticatedUser(a.getIssueHandler))
+		r.Get("/user/all", a.requireAuthenticatedUser(a.getAllUserIssuesHandler))
+		r.Get("/workspace/{slug}/{id}", a.requireAuthenticatedUser(a.requirePermission(data.MemberPermission, a.getAllWorkspaceIssuesHandler)))
 	})
 
 	r.Route("/v1/upload", func(r chi.Router) {

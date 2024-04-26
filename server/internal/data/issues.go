@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"time"
 
@@ -71,86 +70,6 @@ func (m *IssueModal) Insert(issue *Issue) error {
 	return nil
 }
 
-func (m *IssueModal) Get(id int64) (*Issue, error) {
-	query := `SELECT id, created_at, title, COALESCE(description, ''), status, COALESCE(priority, ''), COALESCE(due_date, '0001-01-01'), version FROM issues WHERE id = $1`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	var issue Issue
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&issue.ID,
-		&issue.CreatedAt,
-		&issue.Title,
-		&issue.Description,
-		&issue.Status,
-		&issue.Priority,
-		&issue.DueDate,
-		&issue.Version,
-	)
-
-	if err != nil {
-		switch {
-		case errors.Is(err, sql.ErrNoRows):
-			return nil, ErrRecordNotFound
-		default:
-			return nil, err
-		}
-	}
-
-	if issue.DueDate == time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC) {
-		issue.DueDate = time.Time{}
-	}
-
-	return &issue, nil
-}
-
-func (m *IssueModal) Update(issue *Issue) error {
-	query := `
-        UPDATE issues
-        SET title = $1, description = $2, status = $3, priority = $4, due_date = $5, version = version + 1
-        WHERE id = $6 AND version = $7
-        RETURNING version
-    `
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	args := []interface{}{
-		issue.Title,
-		newNullString(issue.Description),
-		issue.Status,
-		newNullString(issue.Priority),
-		newNullDate(issue.DueDate),
-		issue.ID,
-		issue.Version,
-	}
-
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&issue.Version)
-	if err != nil {
-		switch {
-		case errors.Is(err, sql.ErrNoRows):
-			return ErrEditConflict
-		default:
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *IssueModal) Delete(id int64) error {
-	query := `DELETE FROM issues WHERE id = $1`
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	_, err := m.DB.ExecContext(ctx, query, id)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *IssueModal) InsertUserWorkspaceIssue(userWorkspaceIssue *UserWorkspaceIssue) error {
 	fmt.Println("UserWorkspaceIssue: ", userWorkspaceIssue.CreatorId)
 	query := `
@@ -185,4 +104,138 @@ func (m *IssueModal) InsertUserWorkspaceIssue(userWorkspaceIssue *UserWorkspaceI
 	}
 
 	return nil
+}
+
+func (m *IssueModal) GetIssuesByWorkspace(workspaceId int64) ([]*Issue, error) {
+	query := `SELECT i.id, i.created_at, i.title, COALESCE(i.description, ''), i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'), i.version FROM issues i JOIN user_workspace_issues uwi ON i.id = uwi.issue_id WHERE uwi.workspace_id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var issues []*Issue
+	for rows.Next() {
+		var issue Issue
+		err := rows.Scan(
+			&issue.ID,
+			&issue.CreatedAt,
+			&issue.Title,
+			&issue.Description,
+			&issue.Status,
+			&issue.Priority,
+			&issue.DueDate,
+			&issue.Version,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if issue.DueDate == time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC) {
+			issue.DueDate = time.Time{}
+		}
+
+		issues = append(issues, &issue)
+	}
+
+	return issues, nil
+}
+
+func (m *IssueModal) GetIssuesByUser(userId int64) ([]*Issue, error) {
+	query := `SELECT i.id, i.created_at, i.title, COALESCE(i.description, ''), i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'), i.version FROM issues i JOIN user_workspace_issues uwi ON i.id = uwi.issue_id WHERE uwi.user_id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var issues []*Issue
+	for rows.Next() {
+		var issue Issue
+		err := rows.Scan(
+			&issue.ID,
+			&issue.CreatedAt,
+			&issue.Title,
+			&issue.Description,
+			&issue.Status,
+			&issue.Priority,
+			&issue.DueDate,
+			&issue.Version,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if issue.DueDate == time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC) {
+			issue.DueDate = time.Time{}
+		}
+
+		issues = append(issues, &issue)
+	}
+
+	return issues, nil
+}
+
+func (m *IssueModal) GetIssueByUser(userId, issueId int64) (*Issue, error) {
+	query := `SELECT i.id, i.created_at, i.title, COALESCE(i.description, ''), i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'), i.version FROM issues i JOIN user_workspace_issues uwi ON i.id = uwi.issue_id WHERE uwi.user_id = $1 AND i.id = $2`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var issue Issue
+	err := m.DB.QueryRowContext(ctx, query, userId, issueId).Scan(
+		&issue.ID,
+		&issue.CreatedAt,
+		&issue.Title,
+		&issue.Description,
+		&issue.Status,
+		&issue.Priority,
+		&issue.DueDate,
+		&issue.Version,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if issue.DueDate == time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC) {
+		issue.DueDate = time.Time{}
+	}
+
+	return &issue, nil
+}
+
+func (m *IssueModal) GetIssueByWorkspace(workspaceId, issueId int64) (*Issue, error) {
+	query := `SELECT i.id, i.created_at, i.title, COALESCE(i.description, ''), i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'), i.version FROM issues i JOIN user_workspace_issues uwi ON i.id = uwi.issue_id WHERE uwi.workspace_id = $1 AND i.id = $2`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var issue Issue
+	err := m.DB.QueryRowContext(ctx, query, workspaceId, issueId).Scan(
+		&issue.ID,
+		&issue.CreatedAt,
+		&issue.Title,
+		&issue.Description,
+		&issue.Status,
+		&issue.Priority,
+		&issue.DueDate,
+		&issue.Version,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if issue.DueDate == time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC) {
+		issue.DueDate = time.Time{}
+	}
+
+	return &issue, nil
 }

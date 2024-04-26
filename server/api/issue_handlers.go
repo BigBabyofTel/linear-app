@@ -3,8 +3,10 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
+	"github.com/go-chi/chi"
 	"github.com/lucabrx/wuhu/internal/data"
 	"github.com/lucabrx/wuhu/internal/validator"
 )
@@ -61,6 +63,51 @@ func (a *app) createIssueHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := a.writeJSON(w, http.StatusCreated, envelope{"issue": issue}, nil); err != nil {
+		a.serverErrorResponse(w, r, err)
+	}
+}
+
+func (a *app) getAllWorkspaceIssuesHandler(w http.ResponseWriter, r *http.Request) {
+	params := chi.URLParam(r, "id")
+	id, _ := strconv.ParseInt(params, 10, 64)
+
+	issues, err := a.DB.Issue.GetIssuesByWorkspace(id)
+	if err != nil {
+		a.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if err := a.writeJSON(w, http.StatusOK, envelope{"issues": issues}, nil); err != nil {
+		a.serverErrorResponse(w, r, err)
+	}
+}
+
+func (a *app) getAllUserIssuesHandler(w http.ResponseWriter, r *http.Request) {
+	session := a.contextGetUser(r)
+
+	issues, err := a.DB.Issue.GetIssuesByUser(session.ID)
+	if err != nil {
+		a.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if err := a.writeJSON(w, http.StatusOK, envelope{"issues": issues}, nil); err != nil {
+		a.serverErrorResponse(w, r, err)
+	}
+}
+
+func (a *app) getIssueHandler(w http.ResponseWriter, r *http.Request) {
+	session := a.contextGetUser(r)
+	params := chi.URLParam(r, "issueId")
+	id, _ := strconv.ParseInt(params, 10, 64)
+
+	issue, err := a.DB.Issue.GetIssueByUser(session.ID, id)
+	if err != nil {
+		a.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if err := a.writeJSON(w, http.StatusOK, envelope{"issue": issue}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
 }
