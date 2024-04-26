@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -145,33 +146,60 @@ func (m *IssueModal) GetIssuesByWorkspace(workspaceId int64) ([]*Issue, error) {
 	return issues, nil
 }
 
-func (m *IssueModal) GetIssuesByUser(userId int64) ([]*Issue, error) {
-	query := `SELECT i.id, i.created_at, i.title, COALESCE(i.description, ''), i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'), i.version FROM issues i JOIN user_workspace_issues uwi ON i.id = uwi.issue_id WHERE uwi.user_id = $1`
+func (m *IssueModal) GetIssuesByUser(userId int64, search string, filters Filters) ([]*Issue, Metadata, error) {
+	baseQuery := `SELECT count(*) OVER(), i.id, i.created_at, i.title, i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'),
+				  i.version 
+				  FROM issues i 
+				  JOIN user_workspace_issues uwi 
+				  ON i.id = uwi.issue_id 
+				  WHERE uwi.creator_id = $1 
+				  `
 
+	if search != "" {
+		// only title search
+		baseQuery += `AND (LOWER(i.title) LIKE '%' || LOWER($4) || '%')`
+	}
+
+	advQuery := fmt.Sprintf(` ORDER BY %s %s, i.id ASC LIMIT $2 OFFSET $3`,
+		filters.sortColumn(), filters.sortDirection(),
+	)
+
+	args := []interface{}{userId, filters.limit(), filters.offset()}
+	if search != "" {
+		args = append(args, search)
+	}
+	query := baseQuery + advQuery
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query, userId)
+	rows, err := m.DB.QueryContext(ctx, query, args...)
+
 	if err != nil {
-		return nil, err
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, Metadata{}, ErrRecordNotFound
+		default:
+			return nil, Metadata{}, err
+		}
 	}
 	defer rows.Close()
 
+	totalRecords := 0
 	var issues []*Issue
 	for rows.Next() {
 		var issue Issue
 		err := rows.Scan(
+			&totalRecords,
 			&issue.ID,
 			&issue.CreatedAt,
 			&issue.Title,
-			&issue.Description,
 			&issue.Status,
 			&issue.Priority,
 			&issue.DueDate,
 			&issue.Version,
 		)
 		if err != nil {
-			return nil, err
+			return nil, Metadata{}, err
 		}
 
 		if issue.DueDate == time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC) {
@@ -181,7 +209,13 @@ func (m *IssueModal) GetIssuesByUser(userId int64) ([]*Issue, error) {
 		issues = append(issues, &issue)
 	}
 
-	return issues, nil
+	if totalRecords == 0 {
+		return nil, Metadata{}, ErrRecordNotFound
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return issues, metadata, nil
 }
 
 func (m *IssueModal) GetIssueByUser(userId, issueId int64) (*Issue, error) {

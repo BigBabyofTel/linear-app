@@ -2,12 +2,10 @@ package api
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
-	"github.com/go-chi/httprate"
 	"github.com/lucabrx/wuhu/internal/data"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -17,7 +15,7 @@ func (a *app) routes() *chi.Mux {
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(httprate.LimitByIP(100, 1*time.Minute))
+	//r.Use(httprate.LimitByIP(100, 1*time.Minute))
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},

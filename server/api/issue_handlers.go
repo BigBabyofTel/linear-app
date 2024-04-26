@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -85,13 +86,38 @@ func (a *app) getAllWorkspaceIssuesHandler(w http.ResponseWriter, r *http.Reques
 func (a *app) getAllUserIssuesHandler(w http.ResponseWriter, r *http.Request) {
 	session := a.contextGetUser(r)
 
-	issues, err := a.DB.Issue.GetIssuesByUser(session.ID)
-	if err != nil {
-		a.serverErrorResponse(w, r, err)
+	var meta struct {
+		Search string
+		data.Filters
+	}
+
+	qs := r.URL.Query()
+	v := validator.New()
+
+	meta.Filters.Sort = a.readString(qs, "sort", "-i.id")
+	meta.Filters.SortSafelist = []string{"i.id", "i.title", "i.status", "i.priority", "i.due_date", "i.created_at", "-i.id", "-i.title", "-i.status", "-i.priority", "-i.due_date", "-i.created_at"}
+	meta.Filters.Page = a.readInt(qs, "page", 1, v)
+	meta.Filters.PageSize = a.readInt(qs, "pageSize", 20, v)
+	meta.Search = a.readString(qs, "search", "")
+
+	if data.ValidateFilters(v, meta.Filters); !v.Valid() {
+		a.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	if err := a.writeJSON(w, http.StatusOK, envelope{"issues": issues}, nil); err != nil {
+	issues, metadata, err := a.DB.Issue.GetIssuesByUser(session.ID, meta.Search, meta.Filters)
+	fmt.Println("Error: ", err)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			a.notFoundResponse(w, r)
+		default:
+			a.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	if err := a.writeJSON(w, http.StatusOK, envelope{"metadata": metadata, "issues": issues}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
 }
