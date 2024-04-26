@@ -1,6 +1,3 @@
 {
-  "/(landingpage)/page": "app/(landingpage)/page.js",
-  "/dashboard/usersettings/page": "app/dashboard/usersettings/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/(signup-signin)/signup/page": "app/(signup-signin)/signup/page.js"
+  "/dashboard/page": "app/dashboard/page.js"
 }
