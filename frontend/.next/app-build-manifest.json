@@ -1,9 +1,15 @@
 {
   "pages": {
-    "/page": [
+    "/(landingpage)/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/(landingpage)/page.js"
+    ],
+    "/(landingpage)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/(landingpage)/layout.css",
+      "static/chunks/app/(landingpage)/layout.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -11,10 +17,30 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/_not-found/page": [
+    "/dashboard/usersettings/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/dashboard/usersettings/page.js"
+    ],
+    "/dashboard/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/dashboard/layout.js"
+    ],
+    "/dashboard/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/dashboard/page.js"
+    ],
+    "/(signup-signin)/signup/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(signup-signin)/signup/page.js"
+    ],
+    "/(signup-signin)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(signup-signin)/layout.js"
     ]
   }
 }

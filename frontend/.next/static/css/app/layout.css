@@ -633,6 +633,10 @@ video {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -766,6 +770,9 @@ video {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
+}
+.flex-row {
+  flex-direction: row;
 }
 .flex-col {
   flex-direction: column;
