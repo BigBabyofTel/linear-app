@@ -102,18 +102,9 @@ func (a *app) emailLoginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "token",
-		Value:    sessionToken.Plaintext,
-		Expires:  time.Now().Add(30 * 24 * time.Hour),
-		Path:     "/",
-		Domain:   "ip.lukabrx.dev",
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
-	})
-
-	if err := a.writeJSON(w, http.StatusCreated, map[string]interface{}{"message": "welcome back"}, nil); err != nil {
+	if err := a.writeJSON(w, http.StatusCreated, map[string]interface{}{
+		"accessToken": sessionToken.Plaintext,
+	}, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
 
