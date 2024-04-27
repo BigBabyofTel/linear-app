@@ -109,7 +109,8 @@ func (a *app) emailLoginUserHandler(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteLaxMode,
+		Domain:   "localhost",
 	})
 
 	if err := a.writeJSON(w, http.StatusCreated, map[string]interface{}{"message": "welcome back"}, nil); err != nil {
