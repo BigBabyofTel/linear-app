@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "next-themes";
 import { Icons } from "./icons";
 
 export function ThemeToggle() {

@@ -143,9 +143,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
-  }
-  #root {
-    @apply flex h-dvh flex-col;
+    @apply flex h-dvh flex-col bg-background text-foreground;
   }
 }
