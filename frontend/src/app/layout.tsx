@@ -17,13 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <QueryClientProvider client={queryClient}>
-        <html lang="en">
-          <body className={inter.className}>{children}</body>
-          <Toaster />
-        </html>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {" "}
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <Toaster />
+          </QueryClientProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
