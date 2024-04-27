@@ -3,13 +3,14 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
-const cardVariants = cva(
-  "rounded-lg bg-card text-card-foreground",
-  {
+const cardVariants = cva("rounded-lg border-white/20 border bg-card text-card-foreground p-3", {
   variants: {
     variant: {
-      default: "shadow-sm border",
-      dashboard: "shadow-lg border",
+      default: "shadow-inner shadow-md",
+      dashboard: "border-2",
+      blurred: "shadow-md backdrop-blur-lg bg-white/15",
+      clickable:
+        "shadow-md border bg-gradient-to-b from-[#181920] to-bg-card hover:border-accent-foreground transition-colors duration-200 ease-in-out hover:cursor-pointer",
     },
   },
   defaultVariants: {
