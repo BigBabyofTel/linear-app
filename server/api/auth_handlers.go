@@ -111,8 +111,10 @@ func (a *app) emailLoginUserHandler(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 		SameSite: http.SameSiteNoneMode,
 	})
-	w.Header().Set("Location", "http://localhost:3000/dashboard")
-	w.WriteHeader(http.StatusTemporaryRedirect)
+
+	if err := a.writeJSON(w, http.StatusCreated, map[string]interface{}{"message": "welcome back"}, nil); err != nil {
+		a.serverErrorResponse(w, r, err)
+	}
 
 }
 
