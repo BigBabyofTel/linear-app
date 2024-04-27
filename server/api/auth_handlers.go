@@ -51,6 +51,7 @@ func (a *app) emailRegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err := a.writeJSON(w, http.StatusCreated, user, nil); err != nil {
 		a.serverErrorResponse(w, r, err)
 	}
+
 }
 
 func (a *app) emailLoginUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -101,9 +102,18 @@ func (a *app) emailLoginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := a.writeJSON(w, http.StatusOK, envelope{"token": sessionToken.Plaintext}, nil); err != nil {
-		a.serverErrorResponse(w, r, err)
-	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    sessionToken.Plaintext,
+		Expires:  time.Now().Add(month),
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
+	})
+	w.Header().Set("Location", "http://localhost:3000/dashboard")
+	w.WriteHeader(http.StatusTemporaryRedirect)
+
 }
 
 func (a *app) logoutHandler(w http.ResponseWriter, r *http.Request) {
