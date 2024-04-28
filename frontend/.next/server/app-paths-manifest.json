@@ -1,4 +1,9 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/(dashboard)/workspace/page": "app/(dashboard)/workspace/page.js",
+  "/(dashboard)/workspace/general/page": "app/(dashboard)/workspace/general/page.js",
+  "/(dashboard)/workspace/members/page": "app/(dashboard)/workspace/members/page.js",
+  "/(dashboard)/workspace/overview/page": "app/(dashboard)/workspace/overview/page.js",
+  "/(dashboard)/workspace/security/page": "app/(dashboard)/workspace/security/page.js"
 }
