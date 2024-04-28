@@ -1,15 +1,12 @@
-import { Card } from "@/components/ui/card";
-import { ReactNode } from "react";
+'use client'
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const Sidebar = () => {
-  return (
-    <div className="w-[23%] p-5">
-      <Card variant="default">Wuhu
-      <h2>Dashboard</h2>
-      </Card>
-      
-    </div>
-  );
-};
+    return (
+      <div className="w-[23%] p-3">
+        <ThemeToggle />
+      </div>
+    );
+}
 
 export default Sidebar;
