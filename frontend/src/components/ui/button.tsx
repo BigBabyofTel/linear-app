@@ -8,13 +8,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-zinc-800 text-white border-white/10 hover:border-white/20",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-gradient-to-t from-zinc-700 to-zinc-700 text-secondary-foreground border-white/10 hover:border-white/20",
-        ghost: "text-foreground/80 border-transparent hover:text-foreground/100 bg-transparent",
-        link: "text-primary underline-offset-4 hover:underline",
-        blurry: "bg-white/10 border-white/10 backdrop-blur-[2px] text-white hover:border-white/20",
+        default: "bg-primary hover:bg-primary/80 text-primary-foreground border-black/10 hover:border-black/40 dark:border-white/10 dark:hover:border-white/20",
+        destructive: "bg-destructive border-black/30 hover:border-black/60 dark:border-white/20 dark:hover:border-white-40 text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-foreground dark:border-foreground/40 bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground border-black/20 hover:border-black/40 dark:border-white/10 dark:hover:border-white/20",
+        link: "text-black dark:text-white border-transparent underline-offset-4 hover:underline",
+        blurry: "bg-white/10 dark:border-white/10 backdrop-blur-[2px] text-foreground border-black/10 hover:border-black/20 dark:hover:border-white/20",
       },
       size: {
         default: "rounded-full h-8 px-4 py-2",
