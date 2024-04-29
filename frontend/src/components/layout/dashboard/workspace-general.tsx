@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function WorkspaceGeneral() {
+    // TODO: Need to implement setting a logo, updating workspace name/url, functionality to update button, ability to delete workspace.
     const [workspaceName, setWorkspaceName] = useState("Full Stack Group");
     const [workspaceURL, setWorkspaceURL] = useState("full-stack-group");
     return (
@@ -52,7 +53,7 @@ export default function WorkspaceGeneral() {
                         id="workspace-name" 
                         className="w-5/12 rounded h-8 pl-2 text-sm text-white" 
                         value={workspaceName} 
-                        onChange={(e) => setWorkspaceName(e.target.value)}  
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setWorkspaceName(e.target.value)}  
                     />
                 </div>
                 <div className="flex flex-col mt-6">
@@ -66,7 +67,7 @@ export default function WorkspaceGeneral() {
                         id="workspace-url" 
                         className="w-5/12 rounded h-8 pl-2 text-sm text-white" 
                         value={"linear.app/" + workspaceURL} 
-                        onChange={(e) => setWorkspaceURL(e.target.value)}
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setWorkspaceURL(e.target.value)}
                     />
                 </div>
                 <Button className="w-[80px] h-[35px] bg-indigo-400 mt-6 rounded text-sm hover:brightness-110 ">
@@ -81,7 +82,7 @@ export default function WorkspaceGeneral() {
                 <p className="mt-4 text-sm text-muted-foreground">
                     If you want to permanently delete this workspace and all of its data, including but not limited to users, issues, and comments, you can do so below.
                 </p>
-                <Button className="w-[200px] h-[35px] bg-red-500 mt-4 rounded text-sm hover:brightness-110">
+                <Button variant="destructive" className="w-[200px] h-[35px] mt-4 rounded text-sm hover:brightness-110">
                     Delete this workspace
                 </Button>
             </div>
