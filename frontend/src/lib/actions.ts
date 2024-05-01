@@ -21,10 +21,9 @@ const action = createSafeActionClient();
 export const signInAction = action(signInSchema, async ({ email, password }) => {
   const cookieStore = cookies();
   const res = await API.post("/auth/login", { email, password });
-  console.log(res.data.accessToken);
 
   cookieStore.set("token", res.data.accessToken);
   return {
-    success: "Yey, works! 🎉",
+    success: true,
   };
 });
