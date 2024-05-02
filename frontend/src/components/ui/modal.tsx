@@ -35,7 +35,7 @@ export function Modal({ children, isOpen, className, onClose }: ModalProps) {
     isOpen && (
       <div className="fixed inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
         <div ref={modalRef} className={cn("relative rounded-md border border-border bg-card shadow-lg", className)}>
-          <Button className="absolute right-2 top-2" variant="ghost" size="iconSm" onClick={onClose}>
+          <Button className="absolute right-2 top-2" variant="link" size="iconSm" onClick={onClose}>
             <Icons.Close className="size-4" />
           </Button>
           {children}
