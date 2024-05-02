@@ -27,3 +27,17 @@ export const signInAction = action(signInSchema, async ({ email, password }) => 
     success: true,
   };
 });
+
+export async function changePassword() {
+  try {
+  const res = await API.patch('/password', {
+    headers: {'Content-Type': 'application/json'},
+    body: {
+      "currentPassword": "string",
+    "newPassword": "string"
+    }
+  })
+  } catch (e) {
+    console.log(e)
+  }
+}
