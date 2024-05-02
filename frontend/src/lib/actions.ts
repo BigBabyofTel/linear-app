@@ -30,12 +30,13 @@ export const signInAction = action(signInSchema, async ({ email, password }) => 
   };
 });
 
-export async function changePassword(formData: FormData, bearerToken: string) {
+export async function changePassword(formData: FormData) {
   try {
+    const cookieStore = cookies();
     const res = await API.patch("/password", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${bearerToken}`,
+        Authorization: `Bearer ${cookieStore.get("token")}`,
       },
       body: {
         currentPassword: formData.get("currentPassword"),
@@ -55,10 +56,37 @@ export async function changePassword(formData: FormData, bearerToken: string) {
   }
 }
 
+
 export async function deleteAccount() {
   try {
-    API.delete("/");
+    const cookieStore = cookies();
+    API.delete("/", {
+      headers: {
+        "Content Type": "application/json",
+        Authorization: `Bearer ${cookieStore.get("token")} `
+      }
+    });
   } catch (e) {
-    console.log(e);
+    if (e instanceof AxiosError) {
+      console.error(e.message)
+    }
+  }
+}
+
+export async function getUser() {
+  try{
+    const cookieStore = cookies();
+    const res = await API.get("/", {
+      headers: {
+        "Content Type": "application/json",
+        Authorization: `Bearer ${cookieStore.get("token")}`
+      }})
+    if (!res) {
+      console.log(AxiosError);
+    }
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      console.error(e.message)
+    }
   }
 }
