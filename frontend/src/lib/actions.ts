@@ -4,8 +4,8 @@ import { createSafeActionClient } from "next-safe-action";
 import { z } from "zod";
 import { API } from "./utils";
 import { cookies } from "next/headers";
-import { FormProvider } from "react-hook-form";
-import { FormEventHandler } from "react";
+import { AxiosError } from "axios";
+
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`|\\-]).{8,}$/;
 
 const signInSchema = z.object({
@@ -30,16 +30,35 @@ export const signInAction = action(signInSchema, async ({ email, password }) => 
   };
 });
 
-export async function changePassword(formData: FormData) {
+export async function changePassword(formData: FormData, bearerToken: string) {
   try {
-  const res = await API.patch('/password', {
-    headers: {'Content-Type': 'application/json'},
-    body: {
-      "currentPassword": formData.get("currentPassword"),
-      "newPassword": formData.get("newPassword")
+    const res = await API.patch("/password", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${bearerToken}`,
+      },
+      body: {
+        currentPassword: formData.get("currentPassword"),
+        newPassword: formData.get("newPassword"),
+      },
+    });
+    if (!res) {
+      console.log(AxiosError);
     }
-  })
+    console.log("Password updated successfully");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Network error:", error.response?.data?.message || error.message);
+    } else {
+      console.log(error);
+    }
+  }
+}
+
+export async function deleteAccount() {
+  try {
+    API.delete("/");
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 }
