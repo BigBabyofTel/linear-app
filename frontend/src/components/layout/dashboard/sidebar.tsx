@@ -12,7 +12,7 @@ const Sidebar = () => {
   return (
     <div className="flex h-screen w-[23%] flex-col items-center gap-2 rounded-2xl border p-3 min-w-[260px]">
       <div className="flex flex-row justify-between w-[80%]">
-          <select name="workspace">Workspace selector
+          <select name="workspace">
           <option value="1">Workspace 1</option>
           <option value="2">Workspace 2</option>
         </select>
@@ -20,7 +20,7 @@ const Sidebar = () => {
         <CreateIssue isOpen={isOpen} closeFn={() => setIsOpen(false)} />
       </div>
       <ThemeToggle />
-      <section className="flex flex-col gap-1">
+      <section className="flex flex-col gap-1 -z-30">
         <Button className="rounded" variant="blurry" onClick={() => router.push("/dashboard/workplace")}>
           Workplace
         </Button>
