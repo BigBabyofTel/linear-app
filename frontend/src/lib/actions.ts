@@ -4,6 +4,8 @@ import { createSafeActionClient } from "next-safe-action";
 import { z } from "zod";
 import { API } from "./utils";
 import { cookies } from "next/headers";
+import { FormProvider } from "react-hook-form";
+import { FormEventHandler } from "react";
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`|\\-]).{8,}$/;
 
 const signInSchema = z.object({
@@ -27,3 +29,17 @@ export const signInAction = action(signInSchema, async ({ email, password }) => 
     success: true,
   };
 });
+
+export async function changePassword(formData: FormData) {
+  try {
+  const res = await API.patch('/password', {
+    headers: {'Content-Type': 'application/json'},
+    body: {
+      "currentPassword": formData.get("currentPassword"),
+      "newPassword": formData.get("newPassword")
+    }
+  })
+  } catch (e) {
+    console.log(e)
+  }
+}
