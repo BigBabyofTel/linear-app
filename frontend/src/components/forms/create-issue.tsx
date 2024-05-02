@@ -60,7 +60,7 @@ export function CreateIssue({ closeFn, isOpen }: CreateIssueProps) {
           />
         </div>
         <div className="flex w-full items-center justify-between border border-t p-4">
-          <Button variant="ghost" size="icon">
+          <Button variant="link" size="icon">
             <Icons.Attachment className="size-4" />
           </Button>
           <Button size="sm">Create</Button>
