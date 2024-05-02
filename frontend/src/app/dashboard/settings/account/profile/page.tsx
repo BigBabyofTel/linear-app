@@ -1,6 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { changePassword } from "@/lib/actions";
 import { Avatar, AvatarIcon } from "@nextui-org/avatar";
 import { CalendarHeart } from "lucide-react";
+import { Form } from "react-hook-form";
 
 export default function Page() {
   return (
@@ -40,14 +43,19 @@ export default function Page() {
           <Card className="w-[600px]">
             <CardHeader className="text-center">Change Password</CardHeader>
             <CardContent>
-              <section className="flex justify-between m-1">
+              <form action={changePassword}>
+              <section className="flex justify-between p-5">
               <label htmlFor="current password">Current Password</label>
-              <input type="password" />
+              <input type="password" name="currentPassword" />
               </section>
-              <section className="flex justify-between m-1">
+              <section className="flex justify-between p-5">
               <label htmlFor="new password">New Password</label>
-              <input type="password" />
+              <input type="password" name="newPassword" />
               </section>
+              <section className="flex justify-center p-5">
+              <Button>Change</Button>
+              </section>
+              </form>
             </CardContent>
           </Card>
         </section>
