@@ -1,3 +1,7 @@
+-- +goose Up
+-- +goose StatementBegin
+SELECT 'up SQL query';
+
 CREATE TABLE IF NOT EXISTS issues(
     id bigserial PRIMARY KEY,
     created_at timestamp(0) NOT NULL DEFAULT NOW(),
@@ -75,3 +79,20 @@ CREATE TABLE IF NOT EXISTS user_workspace_permissions(
     permission_id bigint NOT NULL REFERENCES permissions ON DELETE CASCADE,
     PRIMARY KEY (workspace_id, user_id, permission_id)
 );
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+SELECT 'down SQL query';
+
+DROP TABLE IF EXISTS issues;
+DROP TABLE IF EXISTS workspaces;
+DROP TABLE IF EXISTS permissions;
+DROP TABLE IF EXISTS user_workspace_issues;
+DROP TABLE IF EXISTS requests;
+DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS issue_comments;
+DROP TABLE IF EXISTS comment_reactions;
+DROP TABLE IF EXISTS user_workspace_permissions;
+
+-- +goose StatementEnd
