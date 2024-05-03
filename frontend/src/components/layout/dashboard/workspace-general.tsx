@@ -70,7 +70,7 @@ export default function WorkspaceGeneral() {
                         onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setWorkspaceURL(e.target.value)}
                     />
                 </div>
-                <Button className="w-[80px] h-[35px] bg-indigo-400 mt-6 rounded text-sm hover:brightness-110 ">
+                <Button className="w-[80px] h-[35px] bg-indigo-400 mt-6 rounded text-sm hover:brightness-110">
                     Update
                 </Button>
                 <hr className="w-full h-[1px] mt-6" />
