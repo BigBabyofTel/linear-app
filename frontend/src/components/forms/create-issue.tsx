@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useSession } from "@/hooks/useSession";
 
 type CreateIssueProps = {
   closeFn: () => void;
@@ -21,6 +22,7 @@ const createIssueSchema = z.object({
 type CreateIssueSchema = z.infer<typeof createIssueSchema>;
 
 export function CreateIssue({ closeFn, isOpen }: CreateIssueProps) {
+  const { token } = useSession();
   const {
     register,
     handleSubmit,
@@ -32,6 +34,10 @@ export function CreateIssue({ closeFn, isOpen }: CreateIssueProps) {
 
   function onSubmit(data: CreateIssueSchema) {
     console.log(data);
+    const issueData = {
+      ...data,
+      userId: token
+    }
     reset;
   }
 
