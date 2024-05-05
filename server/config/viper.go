@@ -16,6 +16,7 @@ type AppConfig struct {
 	AwsSecretAccessKey string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
 	AwsRegion          string `mapstructure:"AWS_REGION"`
 	AwsBucketName      string `mapstructure:"AWS_BUCKET_NAME"`
+	OpenAiApiKey       string `mapstructure:"OPENAI_API_KEY"`
 }
 
 func LoadConfig() (AppConfig, error) {
@@ -35,6 +36,7 @@ func LoadConfig() (AppConfig, error) {
 		AwsSecretAccessKey: viper.GetString("AWS_SECRET_ACCESS_KEY"),
 		AwsRegion:          viper.GetString("AWS_REGION"),
 		AwsBucketName:      viper.GetString("AWS_BUCKET_NAME"),
+		OpenAiApiKey:       viper.GetString("OPENAI_API_KEY"),
 	}
 
 	return config, nil

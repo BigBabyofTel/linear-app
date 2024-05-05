@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/lucabrx/wuhu/internal/aws"
+	"github.com/sashabaranov/go-openai"
 
 	"github.com/lucabrx/wuhu/config"
 	"github.com/lucabrx/wuhu/internal/data"
@@ -21,6 +22,7 @@ type app struct {
 	DB     data.Models
 	config config.AppConfig
 	AWS    aws.AWS
+	AI     *openai.Client
 }
 
 //	@title			Linear-Clone API
@@ -38,12 +40,13 @@ type app struct {
 //	@host		petstore.swagger.io
 //	@BasePath	/v2
 
-func NewApplication(db *sql.DB, cfg config.AppConfig) *app {
+func NewApplication(db *sql.DB, cfg config.AppConfig, ai *openai.Client) *app {
 	logger := log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	return &app{
 		logger: &logger,
 		DB:     data.NewModals(db),
 		config: cfg,
 		AWS:    aws.NewAws(cfg.AwsAccessKeyId, cfg.AwsSecretAccessKey),
+		AI:     ai,
 	}
 }

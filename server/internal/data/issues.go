@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -25,14 +26,14 @@ type IssueModal struct {
 }
 
 type Issue struct {
-	ID          int64     `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	Title       string    `json:"title"`
-	Description string    `json:"description,omitempty"`
-	Status      string    `json:"status"`
-	Priority    string    `json:"priority,omitempty"`
-	DueDate     time.Time `json:"dueDate,omitempty"`
-	Version     int64     `json:"version"`
+	ID          int64           `json:"id"`
+	CreatedAt   time.Time       `json:"createdAt"`
+	Title       string          `json:"title"`
+	Description json.RawMessage `json:"description,omitempty"`
+	Status      string          `json:"status"`
+	Priority    string          `json:"priority,omitempty"`
+	DueDate     time.Time       `json:"dueDate,omitempty"`
+	Version     int64           `json:"version"`
 }
 
 type UserWorkspaceIssue struct {
@@ -58,7 +59,7 @@ func (m *IssueModal) Insert(issue *Issue) error {
 	defer cancel()
 	args := []interface{}{
 		issue.Title,
-		newNullString(issue.Description),
+		newNullJsonb(issue.Description),
 		issue.Status,
 		newNullString(issue.Priority),
 		newNullDate(issue.DueDate),

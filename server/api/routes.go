@@ -72,6 +72,10 @@ func (a *app) routes() *chi.Mux {
 		r.Post("/", a.requireAuthenticatedUser(a.answerRequestHandler))
 	})
 
+	r.Route("/v1/ai", func(r chi.Router) {
+		r.Post("/autocomplete", a.requireAuthenticatedUser(a.autocompleteHandler))
+	})
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/swagger/index.html", http.StatusMovedPermanently)
 	})
