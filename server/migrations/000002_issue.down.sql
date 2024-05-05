@@ -1,2 +1,0 @@
-DROP TABLE IF EXISTS issues;
-DROP TABLE IF EXISTS workspaces;

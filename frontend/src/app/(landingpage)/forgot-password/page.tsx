@@ -12,7 +12,7 @@ const signinSchema = z.object({
 
 type signinSchema = z.infer<typeof signinSchema>;
 
-export function ForgotPassword() {
+export default function ForgotPassword() {
   const {
     register,
     handleSubmit,

@@ -7,6 +7,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const API = axios.create({
-  baseURL: "https://ip.lukabrx.dev/api/v1",
+  baseURL: "http://localhost:8080/v1",
   withCredentials: true,
 });

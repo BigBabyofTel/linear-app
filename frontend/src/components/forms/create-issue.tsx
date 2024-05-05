@@ -2,44 +2,64 @@ import { Icons } from "../icons";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Modal } from "../ui/modal";
-import { Textarea } from "../ui/textarea";
+import { Editor } from "../editor";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { API } from "@/lib/utils";
 
 type CreateIssueProps = {
   closeFn: () => void;
   isOpen: boolean;
+  authToken: string;
 };
 
 const createIssueSchema = z.object({
   title: z.string().min(2, "Please provide at least 2 characters").trim(),
-  description: z.string().trim().optional(),
+  description: z.any(),
 });
 type CreateIssueSchema = z.infer<typeof createIssueSchema>;
 
-export function CreateIssue({ closeFn, isOpen }: CreateIssueProps) {
+export function CreateIssue({ closeFn, isOpen, authToken }: CreateIssueProps) {
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<CreateIssueSchema>({
     resolver: zodResolver(createIssueSchema),
   });
 
-  function onSubmit(data: CreateIssueSchema) {
-    console.log(data);
-    reset;
-  }
+  const { mutate } = useMutation({
+    mutationFn: (data: CreateIssueSchema) => {
+      return API.post("/issues", data, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+    },
+    onSuccess: () => {
+      toast.success("Issue created successfully");
+      closeFn();
+    },
+    onError: (error) => {
+      toast.error("Failed to create issue");
+    },
+  });
 
-  useEffect(() => {
-    if (errors.title) {
-      toast.error(errors.title.message);
-    }
-  }, [errors]);
+  function onSubmit(data: CreateIssueSchema) {
+    const payload = {
+      description: data.description,
+      title: data.title,
+      status: "Done",
+      priority: "Low",
+    };
+    mutate(payload);
+  }
 
   return (
     <Modal onClose={closeFn} isOpen={isOpen}>
@@ -52,15 +72,14 @@ export function CreateIssue({ closeFn, isOpen }: CreateIssueProps) {
             variant="empty"
           />
 
-          <Textarea
-            {...register("description")}
-            placeholder="Some cool description, Tu, TU"
-            variant="empty"
-            className="h-40 md:min-w-[30rem]"
+          <Editor
+            onChange={(data) => {
+              setValue("description", JSON.stringify(data));
+            }}
           />
         </div>
         <div className="flex w-full items-center justify-between border border-t p-4">
-          <Button variant="ghost" size="icon">
+          <Button variant="link" size="icon">
             <Icons.Attachment className="size-4" />
           </Button>
           <Button size="sm">Create</Button>

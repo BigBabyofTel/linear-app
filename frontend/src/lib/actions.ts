@@ -4,6 +4,8 @@ import { createSafeActionClient } from "next-safe-action";
 import { z } from "zod";
 import { API } from "./utils";
 import { cookies } from "next/headers";
+import { AxiosError } from "axios";
+
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`|\\-]).{8,}$/;
 
 const signInSchema = z.object({
@@ -21,10 +23,70 @@ const action = createSafeActionClient();
 export const signInAction = action(signInSchema, async ({ email, password }) => {
   const cookieStore = cookies();
   const res = await API.post("/auth/login", { email, password });
-  console.log(res.data.accessToken);
 
   cookieStore.set("token", res.data.accessToken);
   return {
-    success: "Yey, works! 🎉",
+    success: true,
   };
 });
+
+export async function changePassword(formData: FormData) {
+  try {
+    const cookieStore = cookies();
+    const res = await API.patch("/password", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cookieStore.get("token")}`,
+      },
+      body: {
+        currentPassword: formData.get("currentPassword"),
+        newPassword: formData.get("newPassword"),
+      },
+    });
+    if (!res) {
+      console.log(AxiosError);
+    }
+    console.log("Password updated successfully");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Network error:", error.response?.data?.message || error.message);
+    } else {
+      console.log(error);
+    }
+  }
+}
+
+
+export async function deleteAccount() {
+  try {
+    const cookieStore = cookies();
+    API.delete("/", {
+      headers: {
+        "Content Type": "application/json",
+        Authorization: `Bearer ${cookieStore.get("token")} `
+      }
+    });
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      console.error(e.message)
+    }
+  }
+}
+
+export async function getUser() {
+  try{
+    const cookieStore = cookies();
+    const res = await API.get("/", {
+      headers: {
+        "Content Type": "application/json",
+        Authorization: `Bearer ${cookieStore.get("token")}`
+      }})
+    if (!res) {
+      console.log(AxiosError);
+    }
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      console.error(e.message)
+    }
+  }
+}

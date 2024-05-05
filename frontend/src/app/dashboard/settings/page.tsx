@@ -1,10 +1,12 @@
+import Sidebar from "@/components/layout/dashboard/sidebar";
 import { Card } from "@/components/ui/card";
 
-export default function Settings() {
+export default function Page() {
 
     return (
-        <Card variant="blurred">
-<h1>Settings overview</h1>
-        </Card>
+        <>
+        
+      
+        </>
     )
 }
