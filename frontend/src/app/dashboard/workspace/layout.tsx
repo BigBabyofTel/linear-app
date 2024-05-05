@@ -1,10 +1,12 @@
 import Sidebar from "@/components/layout/dashboard/sidebar";
-
-export default function Layout({children}: {children: React.ReactNode}) {
-    return (
-        <section className="flex gap-1">
-            <Sidebar />
-            {children}
-        </section>
-    );
+import { cookies } from "next/headers";
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const cookieStore = cookies();
+  const authToken = cookieStore.get("token")?.value;
+  return (
+    <section className="flex gap-1">
+      <Sidebar authToken={authToken!} />
+      {children}
+    </section>
+  );
 }
