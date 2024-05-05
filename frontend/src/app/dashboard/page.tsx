@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { CircleCheckBigIcon } from "lucide-react";
 
 export default function Page() {
+  // TODO: Make sure to implement GET workspace route
     return (
       <div className="mx-auto flex flex-wrap gap-2 p-3">
         <Button variant="default">Default</Button>
