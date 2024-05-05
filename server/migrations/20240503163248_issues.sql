@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS issues(
     id bigserial PRIMARY KEY,
     created_at timestamp(0) NOT NULL DEFAULT NOW(),
     title text NOT NULL,
-    description text,
+    description jsonb,
     status text NOT NULL DEFAULT 'backlog',
     priority text,
     due_date date,

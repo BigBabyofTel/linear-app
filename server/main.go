@@ -11,6 +11,7 @@ import (
 	_ "github.com/lucabrx/wuhu/docs"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	openai "github.com/sashabaranov/go-openai"
 )
 
 //	@title			Linear Clone API
@@ -47,7 +48,10 @@ func main() {
 	defer dbInstance.Close()
 	log.Info().Msg("Connected to the database!")
 
-	a := api.NewApplication(dbInstance, cfg)
+	aiClient := accessOpenAi(cfg.OpenAiApiKey)
+	log.Info().Msg("Connected to OpenAI!")
+
+	a := api.NewApplication(dbInstance, cfg, aiClient)
 
 	if err = a.Serve(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start server")
@@ -65,4 +69,10 @@ func accessDB(dbUrl string) (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func accessOpenAi(token string) *openai.Client {
+	client := openai.NewClient(token)
+
+	return client
 }

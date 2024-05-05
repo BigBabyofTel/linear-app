@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -25,14 +26,14 @@ type IssueModal struct {
 }
 
 type Issue struct {
-	ID          int64     `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	Title       string    `json:"title"`
-	Description string    `json:"description,omitempty"`
-	Status      string    `json:"status"`
-	Priority    string    `json:"priority,omitempty"`
-	DueDate     time.Time `json:"dueDate,omitempty"`
-	Version     int64     `json:"version"`
+	ID          int64           `json:"id"`
+	CreatedAt   time.Time       `json:"createdAt"`
+	Title       string          `json:"title"`
+	Description json.RawMessage `json:"description,omitempty"`
+	Status      string          `json:"status"`
+	Priority    string          `json:"priority,omitempty"`
+	DueDate     time.Time       `json:"dueDate,omitempty"`
+	Version     int64           `json:"version"`
 }
 
 type UserWorkspaceIssue struct {
@@ -58,7 +59,7 @@ func (m *IssueModal) Insert(issue *Issue) error {
 	defer cancel()
 	args := []interface{}{
 		issue.Title,
-		newNullString(issue.Description),
+		newNullJsonb(issue.Description),
 		issue.Status,
 		newNullString(issue.Priority),
 		newNullDate(issue.DueDate),
@@ -148,7 +149,7 @@ func (m *IssueModal) GetIssuesByWorkspace(workspaceId int64) ([]*Issue, error) {
 
 func (m *IssueModal) GetIssuesByUser(userId int64, search string, filters Filters) ([]*Issue, Metadata, error) {
 	baseQuery := `SELECT count(*) OVER(), i.id, i.created_at, i.title, i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'),
-				  i.version 
+				  i.version, COALESCE(i.description, '{}'::jsonb)
 				  FROM issues i 
 				  JOIN user_workspace_issues uwi 
 				  ON i.id = uwi.issue_id 
@@ -197,6 +198,7 @@ func (m *IssueModal) GetIssuesByUser(userId int64, search string, filters Filter
 			&issue.Priority,
 			&issue.DueDate,
 			&issue.Version,
+			&issue.Description,
 		)
 		if err != nil {
 			return nil, Metadata{}, err

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -16,13 +17,13 @@ func (a *app) createIssueHandler(w http.ResponseWriter, r *http.Request) {
 	session := a.contextGetUser(r)
 	fmt.Println("Session: ", session.ID)
 	var input struct {
-		Title       string    `json:"title"`
-		Description string    `json:"description"`
-		Status      string    `json:"status"`
-		Priority    string    `json:"priority"`
-		DueDate     time.Time `json:"dueDate"`
-		UserId      int64     `json:"userId"`
-		WorkspaceId int64     `json:"workspaceId"`
+		Title       string          `json:"title"`
+		Description json.RawMessage `json:"description"`
+		Status      string          `json:"status"`
+		Priority    string          `json:"priority"`
+		DueDate     time.Time       `json:"dueDate"`
+		UserId      int64           `json:"userId"`
+		WorkspaceId int64           `json:"workspaceId"`
 	}
 
 	if err := a.readJSON(w, r, &input); err != nil {
