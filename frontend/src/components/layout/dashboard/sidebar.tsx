@@ -14,8 +14,8 @@ const Sidebar: React.FC<SidebarProps> = ({ authToken }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="flex h-screen w-[23%] min-w-[260px] flex-col items-center gap-2 rounded-2xl border p-3">
-      <div className="flex w-[80%] flex-row justify-between">
+    <aside className="fixed inset-y-0 left-0 hidden w-72 content-start gap-4 px-6 py-8 md:grid">
+      <div className="flex flex-row justify-between">
         <select name="workspace">
           <option value="1">Workspace 1</option>
           <option value="2">Workspace 2</option>
@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ authToken }) => {
           Profile
         </Button>
       </section>
-    </div>
+    </aside>
   );
 };
 

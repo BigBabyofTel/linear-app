@@ -10,9 +10,10 @@ type EditorProps = {
 
 export function Editor({ onChange }: EditorProps) {
   const editorContainerRef = useRef<HTMLDivElement>(null);
-  const editorInstanceRef = useRef<EditorJS | null>(null);
 
   useEffect(() => {
+    if (!editorContainerRef.current) return;
+
     const editor = new EditorJS({
       holder: "editorjs",
       tools: {
@@ -48,6 +49,10 @@ export function Editor({ onChange }: EditorProps) {
         onChange(data);
       },
     });
+
+    return () => {
+      editor.destroy;
+    };
   }, []);
 
   return <div ref={editorContainerRef} id="editorjs"></div>;

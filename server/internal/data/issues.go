@@ -149,7 +149,7 @@ func (m *IssueModal) GetIssuesByWorkspace(workspaceId int64) ([]*Issue, error) {
 
 func (m *IssueModal) GetIssuesByUser(userId int64, search string, filters Filters) ([]*Issue, Metadata, error) {
 	baseQuery := `SELECT count(*) OVER(), i.id, i.created_at, i.title, i.status, COALESCE(i.priority, ''), COALESCE(i.due_date, '0001-01-01'),
-				  i.version 
+				  i.version, COALESCE(i.description, '{}'::jsonb)
 				  FROM issues i 
 				  JOIN user_workspace_issues uwi 
 				  ON i.id = uwi.issue_id 
@@ -198,6 +198,7 @@ func (m *IssueModal) GetIssuesByUser(userId int64, search string, filters Filter
 			&issue.Priority,
 			&issue.DueDate,
 			&issue.Version,
+			&issue.Description,
 		)
 		if err != nil {
 			return nil, Metadata{}, err

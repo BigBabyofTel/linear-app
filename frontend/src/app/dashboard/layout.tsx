@@ -4,9 +4,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const cookieStore = cookies();
   const authToken = cookieStore.get("token")?.value;
   return (
-    <section className="flex gap-1">
+    <>
       <Sidebar authToken={authToken!} />
       {children}
-    </section>
+    </>
   );
 }

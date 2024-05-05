@@ -55,7 +55,7 @@ export function CreateIssue({ closeFn, isOpen, authToken }: CreateIssueProps) {
     const payload = {
       description: data.description,
       title: data.title,
-      status: "Todo",
+      status: "Done",
       priority: "Low",
     };
     mutate(payload);
