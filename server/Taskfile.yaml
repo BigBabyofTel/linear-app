@@ -72,3 +72,15 @@ tasks:
       - echo "Generating swagger docs..."
       - swag init
       - swag init -g cmd/api/main.go -o cmd/api/docs
+
+  goose-create:
+    desc: Create goose migration
+    cmds:
+      - echo "Creating goose migration..."
+      - goose -dir migrations create {{.name}} sql
+
+  goose-up:
+    desc: Run goose migration
+    cmds:
+      - echo "Running goose migration..."
+      - goose -dir migrations postgres "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable" up

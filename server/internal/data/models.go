@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"time"
 )
@@ -83,6 +84,16 @@ func newNullPassword(b password) sql.NullString {
 	}
 	return sql.NullString{
 		String: string(b.hash),
+		Valid:  true,
+	}
+}
+
+func newNullJsonb(j json.RawMessage) sql.NullString {
+	if len(j) == 0 {
+		return sql.NullString{}
+	}
+	return sql.NullString{
+		String: string(j),
 		Valid:  true,
 	}
 }
