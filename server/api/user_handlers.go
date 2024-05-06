@@ -45,7 +45,9 @@ func (a *app) deleteUserAccountHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, a.config.ClientUrl, http.StatusSeeOther)
+	if err := a.writeJSON(w, http.StatusOK, envelope{"msg": "user deleted"}, nil); err != nil {
+		a.serverErrorResponse(w, r, err)
+	}
 }
 
 type UpdatePasswordInput struct {
